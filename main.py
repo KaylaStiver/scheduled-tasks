@@ -5,9 +5,9 @@ import os
 
 lat = 39.758949
 long = -84.191605
-owm_api_key = os.environ.get("OWM_API_KEY")
-von_api_key = os.environ.get("VON_API_KEY")
-api_secret = os.environ.get("API_SECRET")
+owm_api_key = os.environ.get("owm_api_key")
+von_api_key = os.environ.get("von_api_key")
+api_secret = os.environ.get("api_secret")
 
 data = requests.get(f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={long}&cnt=4&appid={owm_api_key}")
 data.raise_for_status()
