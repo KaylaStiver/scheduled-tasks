@@ -1,31 +1,30 @@
-##################### Extra Hard Starting Project ######################
+import requests
+from vonage import Auth, Vonage
+from vonage_sms import SmsMessage, SmsResponse
 import os
-import datetime as dt
-import random
-import smtplib
-import pandas
 
-#Get current date and read birthdays in csv file.
-today = dt.datetime.now()
-birthdays = pandas.read_csv("birthdays.csv")
+lat = 39.758949
+long = -84.191605
+owm_api_key = os.environ.get("OWM_API_KEY")
+von_api_key = os.environ.get("VON_API_KEY")
+api_secret = os.environ.get("API_SECRET")
 
-#Save all relevant columns to a list
-birthdays_list = birthdays[["name", "email", "month", "day"]].values.tolist()
+data = requests.get(f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={long}&cnt=4&appid={owm_api_key}")
+data.raise_for_status()
+intervals = data.json()["list"]
 
-#Compare each birthdate month and day to today's month and day.
-for birthday in birthdays_list:
-    if today.month == birthday[2] and today.day == birthday[3]:
-        #Choose a random letter and replace placeholder with name of birthday person.
-        letter_num = random.randint(1,3)
-        with open(f"./letter_templates/letter_{letter_num}.txt", mode="r") as file:
-            letter_contents = file.read()
-            letter_with_name = letter_contents.replace("[NAME]", birthday[0])
+raining = False
+for i in intervals:
+    for condition in i["weather"]:
+        if int(condition["id"]) < 700:
+            raining = True
+if raining:
+    client = Vonage(Auth(api_key=von_api_key, api_secret=api_secret))
+    message = SmsMessage(
+        to="19377015358",
+        from_="16265491364",
+        text="Bring an Umbrella!",
+    )
 
-        email = os.environ.get("email")
-        password = os.environ.get("password")
-
-        with smtplib.SMTP('smtp.gmail.com', 587) as connection:
-            connection.starttls()
-            connection.login(user=email, password=password)
-            connection.sendmail(from_addr=email, to_addrs=f"{birthday[1]}",
-                                msg=f"Subject:Happy Birthday!!\n\n{letter_with_name}")
+    response: SmsResponse = client.sms.send(message)
+    print(response)
