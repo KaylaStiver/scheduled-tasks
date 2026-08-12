@@ -41,7 +41,7 @@ jobs:
         env:
           # Your secrets are available as environment variables
           # Add more secrets in Settings > Secrets > Actions
-          owm_api_key: ${{ secrets.OWM_API_KEY }}
-          von_api_key: ${{ secrets.VON_API_KEY }}
-          api_secret: ${{ secrets.API_SECRET }}
+          OWM_API_KEY: ${{ secrets.OWM_API_KEY }}
+          VON_API_KEY: ${{ secrets.VON_API_KEY }}
+          API_SECRET: ${{ secrets.API_SECRET }}
         run: python main.py
