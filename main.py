@@ -5,11 +5,11 @@ import os
 
 lat = 39.758949
 long = -84.191605
-owm_api_key = os.environ.get("owm_api_key")
-von_api_key = os.environ.get("von_api_key")
-api_secret = os.environ.get("api_secret")
+OWM_API_KEY = os.environ.get("OWM_API_KEY")
+VON_API_KEY = os.environ.get("VON_API_KEY")
+API_SECRET = os.environ.get("API_SECRET")
 
-data = requests.get(f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={long}&cnt=4&appid={owm_api_key}")
+data = requests.get(f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={long}&cnt=4&appid={OWM_API_KEY}")
 data.raise_for_status()
 intervals = data.json()["list"]
 
@@ -19,7 +19,7 @@ for i in intervals:
         if int(condition["id"]) < 700:
             raining = True
 if raining:
-    client = Vonage(Auth(api_key=von_api_key, api_secret=api_secret))
+    client = Vonage(Auth(api_key=VON_API_KEY, api_secret=API_SECRET))
     message = SmsMessage(
         to="19377015358",
         from_="16265491364",
